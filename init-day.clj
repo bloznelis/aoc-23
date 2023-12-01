@@ -1,5 +1,4 @@
 #!/usr/bin/bb
-
 (def day (read-string (first *command-line-args*)))
 
 (def src-file "(ns aoc.day-%02d
