@@ -2,12 +2,12 @@
   (:require [clojure.string :as str]))
 
 (defn parse-round [round-str]
-  (update-vals
-   (->> (str/split round-str #", ")
-        (map #(str/split % #" "))
-        (map reverse)
-        (map vec)
-        (into {})) read-string))
+  (->> (str/split round-str #", ")
+       (into {} (comp
+                 (map #(str/split % #" "))
+                 (map reverse)
+                 (map vec)))
+       (#(update-vals % read-string))))
 
 (defn parse-game [line]
   (let [[game rounds] (str/split line #": ")
@@ -22,27 +22,17 @@
 (defn game-valid? [{rounds :rounds}]
   (every? round-valid? rounds))
 
-(defn merge-rounds [round-1 round-2]
-  (loop [acc round-1
-         [[key value] & tail] round-2]
-    (if (nil? key)
-      acc
-      (recur (if (< (acc key 0) value) (conj acc {key value}) acc) tail))))
-
 (defn game-power [{rounds :rounds}]
-  (->> (reduce merge-rounds rounds)
+  (->> (apply merge-with max rounds)
        vals
        (reduce *)))
 
 (defn part-1 [input]
   (->> (str/split-lines input)
-       (map parse-game)
-       (filter game-valid?)
-       (map :id)
-       (reduce +)))
+       (transduce (comp
+                   (map parse-game)
+                   (filter game-valid?)
+                   (map :id)) +)))
 
 (defn part-2 [input]
-  (->> (str/split-lines input)
-       (map parse-game)
-       (map game-power)
-       (reduce +)))
+  (transduce (comp (map parse-game) (map game-power)) + (str/split-lines input)))
