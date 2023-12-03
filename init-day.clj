@@ -18,7 +18,7 @@
   (:require [aoc.day-%02d :as day%d]
             [clojure.test :refer [is]]))
 
-(is (= (day%d/part-1 \"todo\") \"todo\")
+(is (= (day%d/part-1 \"todo\") \"todo\"))
 (is (= (day%d/part-2 \"todo\") \"todo\"))")
 
 (spit (format "./src/aoc/day_%02d.clj" day) (apply format src-file (repeat 3 day)))
