@@ -1,4 +1,8 @@
-(ns aoc.utils)
+(ns aoc.utils
+  (:require [clojure.string :as str]))
+
+(defn split-map [re f s]
+  (map f (str/split s re)))
 
 (defn transpose [m]
   (apply mapv vector m))
@@ -11,3 +15,9 @@
   exists in the map."
   ([m k f]
    (if-let [kv (find m k)] (assoc m k (f (val kv))) m)))
+
+(defn group-map-by
+  "Groups by group-fn and maps the grouped values with map-fn"
+  [group-fn map-fn col]
+  (update-vals (group-by group-fn col) (partial map map-fn)))
+
